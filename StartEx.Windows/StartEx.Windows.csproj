@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+    <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TrimmerRootDescriptor Include="Roots.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StartEx\StartEx.Core.csproj" />
+  </ItemGroup>
+</Project>
