@@ -1,22 +1,26 @@
 ﻿using Avalonia;
-using Avalonia.ReactiveUI;
 using System;
 using StartEx.Core;
+using Splat;
+using StartEx.Core.Interfaces;
+using StartEx.Windows.Implements;
 
-namespace StartEx.Windows; 
+namespace StartEx.Windows;
 
 internal static class Program {
 	// Initialization code. Don't use any Avalonia, third-party APIs or any
 	// SynchronizationContext-reliant code before AppMain is called: things aren't initialized
 	// yet and stuff might break.
 	[STAThread]
-	public static void Main(string[] args) => BuildAvaloniaApp()
+	public static void Main(string[] args) => Bootstrapper
+		.BuildAvaloniaApp()
+		.RegisterPlatformImplements()
 		.StartWithClassicDesktopLifetime(args);
 
-	// Avalonia configuration, don't remove; also used by visual designer.
-	public static AppBuilder BuildAvaloniaApp()
-		=> AppBuilder.Configure<App>()
-			.UsePlatformDetect()
-			.LogToTrace()
-			.UseReactiveUI();
+	private static AppBuilder RegisterPlatformImplements(this AppBuilder builder) =>
+		builder.AfterPlatformServicesSetup(_ => Locator.RegisterResolverCallbackChanged(() => {
+			var locator = AvaloniaLocator.CurrentMutable;
+
+			locator.Bind<IAppLibraryLoader>().ToSingleton<StartMenuAppLibraryLoader>();
+		}));
 }

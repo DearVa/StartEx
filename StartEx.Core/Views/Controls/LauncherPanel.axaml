@@ -1,0 +1,34 @@
+<ct:LauncherPanel xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ct="using:StartEx.Core.Views.Controls"
+        xmlns:m="clr-namespace:StartEx.Core.Models"
+        x:Class="StartEx.Core.Views.Controls.LauncherPanel">
+    <ct:LauncherPanel.Styles>
+        <Style Selector="Border.Item">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Canvas.Left" Duration="0:0:0.3" Easing="CubicEaseInOut"/>
+                    <DoubleTransition Property="Canvas.Top" Duration="0:0:0.3" Easing="CubicEaseInOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+    </ct:LauncherPanel.Styles>
+
+    <ct:LauncherPanel.DataTemplates>
+        <DataTemplate DataType="{x:Type m:LauncherViewFileItem}">
+            <Border Classes="Item">
+                <Border Margin="2" Background="Red">
+                    <TextBlock Text="{Binding FullPath}"/>
+                </Border>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type m:LauncherViewDirectoryItem}">
+            <Border Classes="Item">
+                <Border Margin="2" Background="Yellow">
+                    <TextBlock Text="{Binding FullPath}"/>
+                </Border>
+            </Border>
+        </DataTemplate>
+    </ct:LauncherPanel.DataTemplates>
+</ct:LauncherPanel>

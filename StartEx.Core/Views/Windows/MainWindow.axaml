@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:StartEx.Core.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:ct="using:StartEx.Core.Views.Controls"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="StartEx.Core.Views.Windows.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="StartEx.Core">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto">
+        <Grid Grid.Row="0" Margin="32" RowDefinitions="Auto,*">
+            <TextBox Grid.Row="0"/>
+
+            <ct:LauncherView Grid.Row="1" Margin="0,8,0,0"/>
+        </Grid>
+
+        <Border Grid.Row="1">
+            <DockPanel LastChildFill="True" Margin="8">
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="设置"/>
+                    <Button Content="电源"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+
+</Window>

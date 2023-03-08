@@ -1,5 +1,6 @@
 ﻿namespace StartEx.Core.ViewModels; 
 
-public class MainWindowViewModel : ViewModelBase {
+public class MainWindowViewModel : ViewModelBase
+{
 	public string Greeting => "Welcome to Avalonia!";
 }

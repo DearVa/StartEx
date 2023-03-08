@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ct="using:StartEx.Core.Views.Controls"
+             x:Class="StartEx.Core.Views.Controls.LauncherView">
+    <UserControl.Styles>
+        <Style Selector="ct|LauncherView">
+            <Setter Property="Template">
+                <ControlTemplate TargetType="{x:Type ct:LauncherView}">
+                    <Border>
+                        <ItemsControl Items="{TemplateBinding Panels}" Background="Green">
+                            <ItemsControl>
+                                <DataTemplate DataType="{x:Type ct:LauncherPanel}">
+                                    <ct:LauncherPanel GridSize="{Binding GridSize}"/>
+                                </DataTemplate>
+                            </ItemsControl>
+                        </ItemsControl>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+</UserControl>
