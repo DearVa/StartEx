@@ -1,34 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
-using Avalonia.Controls;
 using StartEx.Core.Models;
+using StartEx.PhysicsEngine;
+using StartEx.PhysicsEngine.DataTypes;
 
 namespace StartEx.Core.Views.Controls;
 
-public partial class LauncherPanel : Canvas {
-	public static readonly StyledProperty<double> GridSizeProperty =
-		AvaloniaProperty.Register<LauncherView, double>(nameof(GridSize), 128);
-
-	public double GridSize {
-		get => GetValue(GridSizeProperty);
-		set => SetValue(GridSizeProperty, value);
-	}
-
-	private readonly Dictionary<LauncherViewItem, Control> itemsMap = new();
-
+public partial class LauncherPanel : PhysicsPanel {
 	public LauncherPanel() {
 		InitializeComponent();
 	}
-
-	//protected override Size MeasureOverride(Size availableSize) {
-	//	var availableWidth = double.IsInfinity(availableSize.Width) ? 0 : availableSize.Width;
-	//	var availableHeight = double.IsInfinity(availableSize.Height) ? 0 : availableSize.Height;
-	//	var gridSize = GridSize;
-	//	return new Size(
-	//		Math.Floor(availableWidth / gridSize) * gridSize,
-	//		Math.Floor(availableHeight / gridSize) * gridSize);
-	//}
 
 	/// <summary>
 	/// 从items中选择能排列的项目，把剩余的项目返回
@@ -41,99 +23,69 @@ public partial class LauncherPanel : Canvas {
 			return items;
 		}
 
-		var gridSize = GridSize;
-		var itemRects = new List<Rect>();
-		var addedControls = new HashSet<Control>();
+		var scale = Scale;
+		var totalSpan = finalSize / scale;
+
+		var placedItemsRects = new List<Rect>();
+		var addedItems = new HashSet<LauncherViewItem>();
 		var remainingItems = new List<LauncherViewItem>();
 
 		for (var i = 0; i < items.Count; i++) {
 			var item = items[i];
 
-			var itemWidth = item.HorizontalSpan * gridSize;
-			var itemHeight = item.VerticalSpan * gridSize;
-
-			if (itemWidth > finalSize.Width || itemHeight > finalSize.Height) {
-				remainingItems.Add(item);
-				continue;  // 无法显示，直接跳过
+			if (item.Size.X > totalSpan.Width) {
+				// 此项目太宽，那就直接让一行都显示此项目
+				// var itemRect = new Rect(itemPoint, new Size(item.HorizontalSpan, item.VerticalSpan));
 			}
 
-			var point = new Point();
-			var isDone = false;
+			// 这一项左上角的位置
+			var itemPoint = new Point();
 
-			while (point.Y < finalSize.Height - itemHeight) {
-				isDone = false;
-				while (point.X < finalSize.Width - itemWidth) {
-					var itemRect = new Rect(point, new Size(itemWidth, itemHeight));
-					var canFitIn = itemRects.All(r => !r.Intersects(itemRect));
-					if (!canFitIn) {
-						point = new Point(point.X + gridSize, point.Y);
+			while (itemPoint.Y < totalSpan.Height - item.Size.Y) {
+				while (itemPoint.X < totalSpan.Width - item.Size.X) {
+					var itemRect = new Rect(itemPoint, new Size(item.Size.X, item.Size.Y));
+
+					if (placedItemsRects.Any(r => r.Intersects(itemRect))) {
+						// 如果有任何相交的，那就说明这个地方不能放，继续往右
+						itemPoint = new Point(itemPoint.X + 1, itemPoint.Y);
 						continue;
 					}
 
-					itemRects.Add(itemRect);
-					var addedControl = ArrangeItem(item, itemRect);
-					if (addedControl != null) {
-						addedControls.Add(addedControl);
+					// 能放下了
+					placedItemsRects.Add(itemRect);
+					addedItems.Add(item);
+					if (!Items.Contains(item)) {
+						Items.Add(item);
 					}
 
-					isDone = true;
-					break;
+					item.TargetPosition = new Vector3(itemRect.X, itemRect.Y, 0);
+					goto NextItem;
 				}
 
-				if (isDone) {
-					break;
-				}
-
-				point = new Point(0, point.Y + gridSize);
+				itemPoint = new Point(0, itemPoint.Y + 1);
 			}
 
 			// 如果已经排不下了，就不再继续排了
-			if (!isDone) {
-				for (; i < items.Count; i++) {
-					remainingItems.Add(items[i]);
-				}
-
-				break;
+			for (; i < items.Count; i++) {
+				remainingItems.Add(items[i]);
 			}
+
+			break;
+
+		NextItem:;
 		}
 
-		for (var i = Children.Count - 1; i >= 0; i--) {
-			var control = Children[i];
-			if (!addedControls.Contains(control)) {
-				Children.RemoveAt(i);
-				foreach (var pair in itemsMap) {
-					if (pair.Value == control) {
-						itemsMap.Remove(pair.Key);
-					}
-				}
+		for (var i = Items.Count - 1; i >= 0; i--) {
+			var control = Items[i];
+			if (!addedItems.Contains(control)) {  // 移除多余的项目
+				Items.RemoveAt(i);
 			}
 		}
 
 		return remainingItems;
 	}
 
-	private Control? ArrangeItem(LauncherViewItem item, Rect itemRect) {
-		if (!itemsMap.TryGetValue(item, out var control)) {
-			foreach (var dataTemplate in DataTemplates.Where(dataTemplate => dataTemplate.Match(item))) {
-				control = dataTemplate.Build(item);
-				if (control == null) {
-					break;
-				}
-
-				itemsMap.Add(item, control);
-				Children.Add(control);
-				break;
-			}
-		}
-
-		if (control == null) {
-			return null;
-		}
-
-		control.SetValue(LeftProperty, itemRect.X);
-		control.SetValue(TopProperty, itemRect.Y);
-		control.SetValue(WidthProperty, itemRect.Width);
-		control.SetValue(HeightProperty, itemRect.Height);
-		return control;
+	protected override void ItemsChanged() {
+		
 	}
 }

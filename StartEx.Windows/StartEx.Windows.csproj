@@ -5,11 +5,16 @@
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
     <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WindowsAPICodePack" Version="7.0.4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{0C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartEx.Core", "StartEx.Core\StartEx.Core.csproj", "{049BE646-8090-4158-B0B5-DABA3AD3968C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartEx.PhysicsEngine", "StartEx.PhysicsEngine\StartEx.PhysicsEngine.csproj", "{AE1F0797-E368-41BB-B199-C57A8C84CDD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{049BE646-8090-4158-B0B5-DABA3AD3968C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{049BE646-8090-4158-B0B5-DABA3AD3968C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{049BE646-8090-4158-B0B5-DABA3AD3968C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE1F0797-E368-41BB-B199-C57A8C84CDD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE1F0797-E368-41BB-B199-C57A8C84CDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE1F0797-E368-41BB-B199-C57A8C84CDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE1F0797-E368-41BB-B199-C57A8C84CDD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

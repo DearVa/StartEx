@@ -6,5 +6,5 @@ namespace StartEx.Core.Interfaces;
 /// 加载一个指定路径的图标
 /// </summary>
 public interface IIconLoader {
-	IImage Load(string path);
+	IImage? Load(string path);
 }

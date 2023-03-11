@@ -1,0 +1,13 @@
+<ct:LauncherFolderPanel xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:ct="using:StartEx.Core.Views.Controls"
+                        xmlns:m="clr-namespace:StartEx.Core.Models"
+                        x:Class="StartEx.Core.Views.Controls.LauncherFolderPanel">
+    <ct:LauncherFolderPanel.DataTemplates>
+        <DataTemplate DataType="{x:Type m:LauncherViewFileItem}">
+            <Border>
+                <Image Source="{Binding Icon}" Margin="4"/>
+            </Border>
+        </DataTemplate>
+    </ct:LauncherFolderPanel.DataTemplates>
+</ct:LauncherFolderPanel>

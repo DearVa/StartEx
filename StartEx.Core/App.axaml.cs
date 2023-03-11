@@ -1,8 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using StartEx.Core.ViewModels;
-using MainWindow = StartEx.Core.Views.Windows.MainWindow;
+using StartEx.Core.Views.Windows;
 
 namespace StartEx.Core; 
 
@@ -13,9 +12,7 @@ public partial class App : Application {
 
 	public override void OnFrameworkInitializationCompleted() {
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-			desktop.MainWindow = new MainWindow {
-				DataContext = new MainWindowViewModel(),
-			};
+			desktop.MainWindow = AvaloniaLocator.Current.GetRequiredService<MainWindow>();
 		}
 
 		base.OnFrameworkInitializationCompleted();

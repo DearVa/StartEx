@@ -5,8 +5,11 @@ using System.IO;
 using System.IO.Enumeration;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
+using DynamicData;
 using StartEx.Core.Interfaces;
 using StartEx.Core.Models;
+using StartEx.PhysicsEngine.DataTypes;
 
 namespace StartEx.Windows.Implements;
 
@@ -22,14 +25,27 @@ public class StartMenuAppLibraryLoader : IAppLibraryLoader {
 			base(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs")) { }  // TODO
 
 		protected override LauncherViewItem TransformEntry(ref FileSystemEntry entry) {
+			var fileName = entry.FileName.ToString();
+			var fullPath = entry.ToFullPath();
+
 			if (entry.IsDirectory) {
-				return new LauncherViewDirectoryItem(entry.ToFullPath()) {
-					HorizontalSpan = 2,
-					VerticalSpan = 2
+				var item = new LauncherViewDirectoryItem(fileName) {
+					TargetSize = new Vector3(2, 2)
 				};
+
+				item.Items.AddRange(Directory
+					.EnumerateFiles(fullPath)
+					.Take(9)
+					.Select(p => new LauncherViewFileItem(Path.GetFileName(p)) {
+					Icon = AvaloniaLocator.Current.GetRequiredService<IIconLoader>().Load(p)
+				}));
+
+				return item;
 			}
 
-			return new LauncherViewFileItem(entry.ToFullPath());
+			return new LauncherViewFileItem(fileName) {
+				Icon = AvaloniaLocator.Current.GetRequiredService<IIconLoader>().Load(fullPath)
+			};
 		}
 
 		public IEnumerator<LauncherViewItem> GetEnumerator() => this;

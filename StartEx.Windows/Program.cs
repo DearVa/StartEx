@@ -22,5 +22,6 @@ internal static class Program {
 			var locator = AvaloniaLocator.CurrentMutable;
 
 			locator.Bind<IAppLibraryLoader>().ToSingleton<StartMenuAppLibraryLoader>();
+			locator.Bind<IIconLoader>().ToSingleton<Shell32IconLoader>();
 		}));
 }

@@ -1,22 +1,30 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<Grid xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ct="using:StartEx.Core.Views.Controls"
-             x:Class="StartEx.Core.Views.Controls.LauncherView">
-    <UserControl.Styles>
-        <Style Selector="ct|LauncherView">
-            <Setter Property="Template">
-                <ControlTemplate TargetType="{x:Type ct:LauncherView}">
-                    <Border>
-                        <ItemsControl Items="{TemplateBinding Panels}" Background="Green">
-                            <ItemsControl>
-                                <DataTemplate DataType="{x:Type ct:LauncherPanel}">
-                                    <ct:LauncherPanel GridSize="{Binding GridSize}"/>
-                                </DataTemplate>
-                            </ItemsControl>
-                        </ItemsControl>
-                    </Border>
-                </ControlTemplate>
-            </Setter>
-        </Style>
-    </UserControl.Styles>
-</UserControl>
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:ct="clr-namespace:StartEx.Core.Views.Controls"
+             x:Class="StartEx.Core.Views.Controls.LauncherView"
+             RowDefinitions="*,Auto">
+    <ListBox x:Name="LauncherPanelsItemsControl" Grid.Row="0">
+        <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+    </ListBox>
+
+    <ItemsControl x:Name="SnakeBarItemsControl" 
+                  Grid.Row="1" Margin="0,8"
+                  HorizontalAlignment="Center">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type sys:Double}">
+                <Ellipse Width="4" Height="4" Margin="2,0"
+                         Fill="{DynamicResource TextControlForeground}"/>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</Grid>

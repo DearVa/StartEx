@@ -1,31 +1,17 @@
-﻿using Avalonia.Media;
+﻿using System;
+using System.Collections.ObjectModel;
+using Avalonia.Media;
+using DynamicData;
 using ReactiveUI;
+using StartEx.PhysicsEngine;
 
 namespace StartEx.Core.Models;
 
 /// <summary>
 /// LauncherView中的一个项目
 /// </summary>
-public abstract class LauncherViewItem : ReactiveObject {
-	/// <summary>
-	/// 在开始菜单中占横向的多少格
-	/// </summary>
-	public int HorizontalSpan {
-		get => horizontalSpan;
-		set => this.RaiseAndSetIfChanged(ref horizontalSpan, value);
-	}
-
-	private int horizontalSpan = 1;
-
-	/// <summary>
-	/// 在开始菜单中占纵向的多少格
-	/// </summary>
-	public int VerticalSpan {
-		get => verticalSpan;
-		set => this.RaiseAndSetIfChanged(ref verticalSpan, value);
-	}
-
-	private int verticalSpan = 1;
+public abstract class LauncherViewItem : PhysicsObject {
+	
 }
 
 
@@ -56,5 +42,12 @@ public class LauncherViewFileItem : LauncherViewFileSystemEntryItem {
 }
 
 public class LauncherViewDirectoryItem : LauncherViewFileSystemEntryItem {
-	public LauncherViewDirectoryItem(string folderPath) : base(folderPath) { }
+	public SourceList<LauncherViewFileItem> Items { get; } = new();
+
+	public ReadOnlyObservableCollection<LauncherViewFileItem> ObservableItems { get; }
+
+	public LauncherViewDirectoryItem(string folderPath) : base(folderPath) {
+		Items.Connect().Bind(out var list).Subscribe();
+		ObservableItems = list;
+	}
 }

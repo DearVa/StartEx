@@ -19,7 +19,9 @@
         <Grid Grid.Row="0" Margin="32" RowDefinitions="Auto,*">
             <TextBox Grid.Row="0"/>
 
-            <ct:LauncherView Grid.Row="1" Margin="0,8,0,0"/>
+            <ct:LauncherView Grid.Row="1" Margin="0,8,0,0"
+                             Items="{Binding Items}"
+                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </Grid>
 
         <Border Grid.Row="1">
