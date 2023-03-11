@@ -27,12 +27,12 @@ public class PhysicsVector3 {
 	/// <summary>
 	/// 弹性。有多快的加速度想回到<see cref="Target"/>
 	/// </summary>
-	public double Elasticity { get; set; } = 120d;
+	public double Elasticity { get; set; } = 200d;
 
 	/// <summary>
 	/// 阻尼。
 	/// </summary>
-	public double Damping { get; set; } = 15d;
+	public double Damping { get; set; } = 18d;
 
 	public bool IsSleeping { get; private set; }
 

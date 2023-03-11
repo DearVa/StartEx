@@ -26,7 +26,7 @@ internal class Shell32IconLoader : IIconLoader {
 			return null;
 		}
 
-		using var bitmap = shellThumbnail.SmallBitmap;
+		using var bitmap = shellThumbnail.Bitmap;
 		var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
 		var image = new WriteableBitmap(new PixelSize(bitmap.Width, bitmap.Height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
 

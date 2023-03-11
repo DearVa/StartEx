@@ -34,7 +34,7 @@ public partial class LauncherPanel : PhysicsPanel {
 			var item = items[i];
 
 			if (item.Size.X > totalSpan.Width) {
-				// 此项目太宽，那就直接让一行都显示此项目
+				// TODO: 此项目太宽，那就直接让一行都显示此项目
 				// var itemRect = new Rect(itemPoint, new Size(item.HorizontalSpan, item.VerticalSpan));
 			}
 

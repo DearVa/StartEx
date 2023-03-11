@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -12,18 +13,18 @@ using StartEx.PhysicsEngine.DataTypes;
 namespace StartEx.PhysicsEngine;
 
 public abstract class PhysicsPanel : Canvas {
-	public static readonly DirectProperty<PhysicsPanel, IList<PhysicsObject>> ItemsProperty =
-		AvaloniaProperty.RegisterDirect<PhysicsPanel, IList<PhysicsObject>>(nameof(Items), x => x.items, (x, v) => x.Items = v);
+	public static readonly DirectProperty<PhysicsPanel, IList?> ItemsProperty =
+		AvaloniaProperty.RegisterDirect<PhysicsPanel, IList?>(nameof(Items), x => x.items, (x, v) => x.Items = v);
 
 	/// <summary>
 	/// 所有项目的列表
 	/// </summary>
-	public IList<PhysicsObject> Items {
+	public IList? Items {
 		get => items;
 		set => SetAndRaise(ItemsProperty, ref items, value);
 	}
 
-	private IList<PhysicsObject> items = new ObservableCollection<PhysicsObject>();
+	private IList? items;
 
 	public static readonly DirectProperty<PhysicsPanel, double> ScaleProperty =
 		AvaloniaProperty.RegisterDirect<PhysicsPanel, double>(nameof(ScaleProperty), x => x.scale, (x, v) => x.Scale = v);
@@ -39,7 +40,9 @@ public abstract class PhysicsPanel : Canvas {
 	private double scale = 128d;
 
 	protected PhysicsPanel() {
-		((ObservableCollection<PhysicsObject>)Items).CollectionChanged += CollectionChanged;
+		var items = new ObservableCollection<PhysicsObject>();
+		items.CollectionChanged += CollectionChanged;
+		this.items = items;
 	}
 
 	protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change) {
@@ -48,10 +51,12 @@ public abstract class PhysicsPanel : Canvas {
 		if (change.Property == ItemsProperty) {
 			if (change.OldValue is INotifyCollectionChanged oldList) {
 				oldList.CollectionChanged -= CollectionChanged;
+				CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 			}
 
 			if (change.NewValue is INotifyCollectionChanged newList) {
 				newList.CollectionChanged += CollectionChanged;
+				CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newList as IList));
 			}
 		}
 	}

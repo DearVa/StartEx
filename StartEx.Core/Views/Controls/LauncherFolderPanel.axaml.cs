@@ -20,8 +20,8 @@ public partial class LauncherFolderPanel : PhysicsPanel {
 
 	public LauncherFolderPanel() {
 		InitializeComponent();
-		Scale = 128d / 3d;
-		Width = Height = 128d;
+		Scale = 224d / 3d;
+		Width = Height = 224d;
 	}
 
 	protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change) {
@@ -39,6 +39,10 @@ public partial class LauncherFolderPanel : PhysicsPanel {
 	}
 
 	private void ArrangeItems() {
+		if (Items == null) {
+			return;
+		}
+
 		var gridCount = GridCount;
 		for (var y = 0; y < gridCount.Height; y++) {
 			for (var x = 0; x < gridCount.Width; x++) {
@@ -47,7 +51,7 @@ public partial class LauncherFolderPanel : PhysicsPanel {
 					return;
 				}
 
-				Items[i].TargetPosition = new Vector3(x, y, 0);
+				((PhysicsObject)Items[i]!).TargetPosition = new Vector3(x, y, 0);
 			}
 		}
 	}

@@ -25,25 +25,24 @@ public class StartMenuAppLibraryLoader : IAppLibraryLoader {
 			base(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs")) { }  // TODO
 
 		protected override LauncherViewItem TransformEntry(ref FileSystemEntry entry) {
-			var fileName = entry.FileName.ToString();
 			var fullPath = entry.ToFullPath();
 
 			if (entry.IsDirectory) {
-				var item = new LauncherViewDirectoryItem(fileName) {
+				var item = new LauncherViewDirectoryItem(fullPath) {
 					TargetSize = new Vector3(2, 2)
 				};
 
 				item.Items.AddRange(Directory
 					.EnumerateFiles(fullPath)
 					.Take(9)
-					.Select(p => new LauncherViewFileItem(Path.GetFileName(p)) {
+					.Select(p => new LauncherViewFileItem(Path.GetFileNameWithoutExtension(p)) {
 					Icon = AvaloniaLocator.Current.GetRequiredService<IIconLoader>().Load(p)
 				}));
 
 				return item;
 			}
 
-			return new LauncherViewFileItem(fileName) {
+			return new LauncherViewFileItem(Path.GetFileNameWithoutExtension(fullPath)) {
 				Icon = AvaloniaLocator.Current.GetRequiredService<IIconLoader>().Load(fullPath)
 			};
 		}

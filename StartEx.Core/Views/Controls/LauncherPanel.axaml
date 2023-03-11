@@ -10,7 +10,7 @@
                 <Grid Margin="16" RowDefinitions="*,Auto">
                     <Image Grid.Row="0" Source="{Binding Icon}" Margin="4"/>
                     <TextBlock Grid.Row="1" Text="{Binding FullPath}" FontSize="14"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
                                TextWrapping="Wrap" MaxLines="2"/>
                 </Grid>
             </Border>
@@ -18,7 +18,7 @@
 
         <DataTemplate DataType="{x:Type m:LauncherViewDirectoryItem}">
             <Panel>
-                <Border Margin="8" CornerRadius="8" Background="Red"/>
+                <Border Margin="8" CornerRadius="8" Background="#AA424242"/>
                 <ct:LauncherFolderPanel Items="{Binding ObservableItems}"/>
             </Panel>
         </DataTemplate>
