@@ -35,14 +35,16 @@ public class StartMenuAppLibraryLoader : IAppLibraryLoader {
 				item.Items.AddRange(Directory
 					.EnumerateFiles(fullPath)
 					.Take(9)
-					.Select(p => new LauncherViewFileItem(Path.GetFileNameWithoutExtension(p)) {
-					Icon = AvaloniaLocator.Current.GetRequiredService<IIconLoader>().Load(p)
+					.Select(filePath => new LauncherViewFileItem(filePath) {
+					Icon = AvaloniaLocator.Current.GetRequiredService<IIconLoader>().Load(filePath),
+					PositionElasticity = 600,
+					PositionDamping = 30
 				}));
 
 				return item;
 			}
 
-			return new LauncherViewFileItem(Path.GetFileNameWithoutExtension(fullPath)) {
+			return new LauncherViewFileItem(fullPath) {
 				Icon = AvaloniaLocator.Current.GetRequiredService<IIconLoader>().Load(fullPath)
 			};
 		}

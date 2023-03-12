@@ -6,7 +6,10 @@
     <ct:LauncherFolderPanel.DataTemplates>
         <DataTemplate DataType="{x:Type m:LauncherViewFileItem}">
             <Border>
-                <Image Source="{Binding Icon}" Margin="4"/>
+                <Button CornerRadius="4" Margin="4" Background="Transparent"
+                        Command="{Binding ClickCommand}">
+                    <Image Source="{Binding Icon}" Margin="4"/>
+                </Button>
             </Border>
         </DataTemplate>
     </ct:LauncherFolderPanel.DataTemplates>

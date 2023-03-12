@@ -7,8 +7,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Reactive;
-using DynamicData.Binding;
-using StartEx.PhysicsEngine.DataTypes;
+using static StartEx.PhysicsEngine.PhysicsObject;
 
 namespace StartEx.PhysicsEngine;
 
@@ -39,11 +38,27 @@ public abstract class PhysicsPanel : Canvas {
 
 	private double scale = 128d;
 
+	public static readonly DirectProperty<PhysicsPanel, PhysicsObject?> AttachedPhysicsObjectProperty =
+		AvaloniaProperty.RegisterDirect<PhysicsPanel, PhysicsObject?>(nameof(ScaleProperty),
+			x => x.attachedPhysicsObject, (x, v) => x.AttachedPhysicsObject = v);
+
+	/// <summary>
+	/// 附着到的物理对象
+	/// </summary>
+	public PhysicsObject? AttachedPhysicsObject {
+		get => attachedPhysicsObject;
+		set => SetAndRaise(AttachedPhysicsObjectProperty, ref attachedPhysicsObject, value);
+	}
+
+	private PhysicsObject? attachedPhysicsObject;
+
 	protected PhysicsPanel() {
 		var items = new ObservableCollection<PhysicsObject>();
 		items.CollectionChanged += CollectionChanged;
 		this.items = items;
 	}
+
+	private IDisposable? attachedPhysicsObjectSubscribe;
 
 	protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change) {
 		base.OnPropertyChanged(change);
@@ -58,10 +73,25 @@ public abstract class PhysicsPanel : Canvas {
 				newList.CollectionChanged += CollectionChanged;
 				CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newList as IList));
 			}
+		} else if (change.Property == AttachedPhysicsObjectProperty) {
+			attachedPhysicsObjectSubscribe?.Dispose();
+
+			if (change.NewValue is PhysicsObject newObj) {
+				attachedPhysicsObjectSubscribe = newObj.SubscribePositionChanging(new AnonymousObserver<Vector3ChangingArgs>(args => {
+					if (items == null) {
+						return;
+					}
+
+					var moveVec = args.NewValue - args.OldValue;  // 计算出运动的矢量
+					foreach (PhysicsObject item in items) {
+						item.Position -= moveVec;  // 加到子物体上
+					}
+				}));
+			}
 		}
 	}
 
-	private readonly Dictionary<PhysicsObject, IDisposable[]> subscribes = new();
+	private readonly Dictionary<PhysicsObject, IDisposable[]> childSubscribes = new();
 
 	private void CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 		if (e.NewItems != null) {
@@ -69,31 +99,29 @@ public abstract class PhysicsPanel : Canvas {
 				var control = DataTemplates.FirstOrDefault(t => t.Match(newItem))?.Build(newItem) ?? new Border();
 				control.DataContext = newItem;
 
-				if (subscribes.TryGetValue(newItem, out var disposables)) {
+				if (childSubscribes.TryGetValue(newItem, out var disposables)) {
 					foreach (var disposable in disposables) {
 						disposable.Dispose();
 					}
 				}
 
-				subscribes[newItem] = new[] {
-					newItem.WhenPropertyChanged(static p => p.Position)
-						.Subscribe(new AnonymousObserver<PropertyValue<PhysicsObject, Vector3>>(value => {
-							var v = value.Value;
-							var expZ = Math.Exp(v.Z);
-							control.SetValue(LeftProperty, expZ * v.X * scale);
-							control.SetValue(TopProperty, expZ * v.Y * scale);
-							var size = value.Sender.Size;
-							control.SetValue(WidthProperty, expZ * size.X * scale);
-							control.SetValue(HeightProperty, expZ * size.Y * scale);
-						})),
-				
-					newItem.WhenPropertyChanged(static p => p.Size)
-						.Subscribe(new AnonymousObserver<PropertyValue<PhysicsObject, Vector3>>(value => {
-							var expZ = Math.Exp(value.Sender.Position.Z);
-							var size = value.Sender.Size;
-							control.SetValue(WidthProperty, expZ * size.X * scale);
-							control.SetValue(HeightProperty, expZ * size.Y * scale);
-						}))
+				childSubscribes[newItem] = new[] {
+					newItem.SubscribePositionChanging(new AnonymousObserver<Vector3ChangingArgs>(args => {
+						var v = args.NewValue;
+						var expZ = Math.Exp(v.Z);
+						control.SetValue(LeftProperty, expZ * v.X * scale);
+						control.SetValue(TopProperty, expZ * v.Y * scale);
+						var size = args.Sender.Size;
+						control.SetValue(WidthProperty, expZ * size.X * scale);
+						control.SetValue(HeightProperty, expZ * size.Y * scale);
+					})),
+
+					newItem.SubscribeSizeChanging(new AnonymousObserver<Vector3ChangingArgs>(args => {
+						var expZ = Math.Exp(args.Sender.Position.Z);
+						var size = args.NewValue;
+						control.SetValue(WidthProperty, expZ * size.X * scale);
+						control.SetValue(HeightProperty, expZ * size.Y * scale);
+					}))
 				};
 
 				Children.Add(control);
@@ -102,7 +130,7 @@ public abstract class PhysicsPanel : Canvas {
 
 		if (e.OldItems != null) {
 			foreach (PhysicsObject oldItem in e.OldItems) {
-				if (subscribes.Remove(oldItem, out var disposables)) {
+				if (childSubscribes.Remove(oldItem, out var disposables)) {
 					foreach (var disposable in disposables) {
 						disposable.Dispose();
 					}

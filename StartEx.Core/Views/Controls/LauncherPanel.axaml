@@ -7,19 +7,23 @@
     <ct:LauncherPanel.DataTemplates>
         <DataTemplate DataType="{x:Type m:LauncherViewFileItem}">
             <Border>
-                <Grid Margin="16" RowDefinitions="*,Auto">
-                    <Image Grid.Row="0" Source="{Binding Icon}" Margin="4"/>
-                    <TextBlock Grid.Row="1" Text="{Binding FullPath}" FontSize="14"
-                               HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
-                               TextWrapping="Wrap" MaxLines="2"/>
-                </Grid>
+                <Button CornerRadius="4" Margin="4" Background="Transparent"
+                        Command="{Binding ClickCommand}">
+                    <Grid Margin="16" RowDefinitions="*,Auto">
+                        <Image Grid.Row="0" Source="{Binding Icon}" Margin="4"/>
+                        <TextBlock Grid.Row="1" Text="{Binding Name}" FontSize="14"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                                   TextWrapping="Wrap" MaxLines="2"/>
+                    </Grid>
+                </Button>
             </Border>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type m:LauncherViewDirectoryItem}">
             <Panel>
                 <Border Margin="8" CornerRadius="8" Background="#AA424242"/>
-                <ct:LauncherFolderPanel Items="{Binding ObservableItems}"/>
+                <ct:LauncherFolderPanel Items="{Binding ObservableItems}"
+                                        AttachedPhysicsObject="{Binding}"/>
             </Panel>
         </DataTemplate>
     </ct:LauncherPanel.DataTemplates>

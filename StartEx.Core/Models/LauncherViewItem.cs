@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Reactive;
+using Avalonia;
 using Avalonia.Media;
 using DynamicData;
 using ReactiveUI;
+using StartEx.Core.Interfaces;
 using StartEx.PhysicsEngine;
 
 namespace StartEx.Core.Models;
@@ -21,6 +25,8 @@ public abstract class LauncherViewItem : PhysicsObject {
 public abstract class LauncherViewFileSystemEntryItem : LauncherViewItem {
 	public string FullPath { get; set; }
 
+	public string Name => Path.GetFileNameWithoutExtension(FullPath);
+
 	protected LauncherViewFileSystemEntryItem(string fullPath) {
 		FullPath = fullPath;
 	}
@@ -37,8 +43,12 @@ public class LauncherViewFileItem : LauncherViewFileSystemEntryItem {
 
 	private IImage? icon;
 
+	public ReactiveCommand<Unit, Unit> ClickCommand { get; }
 
-	public LauncherViewFileItem(string filePath) : base(filePath) { }
+	public LauncherViewFileItem(string filePath) : base(filePath) {
+		ClickCommand = ReactiveCommand.Create(() => 
+			AvaloniaLocator.Current.GetRequiredService<IAppRunner>().Run(filePath));
+	}
 }
 
 public class LauncherViewDirectoryItem : LauncherViewFileSystemEntryItem {

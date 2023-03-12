@@ -23,5 +23,6 @@ internal static class Program {
 
 			locator.Bind<IAppLibraryLoader>().ToSingleton<StartMenuAppLibraryLoader>();
 			locator.Bind<IIconLoader>().ToSingleton<Shell32IconLoader>();
+			locator.Bind<IAppRunner>().ToSingleton<ProcessAppRunner>();
 		}));
 }
